@@ -13,7 +13,7 @@ const val TAG = "SimpleOnBoarding"
 class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: AttributeSet? = null,defStyle : Int = 0, defStyleRes : Int = 0) : LinearLayout(context,attrs,defStyle,defStyleRes){
 
      var onBoardingConfiguration : OnBoardingConfiguration? = OnBoardingConfiguration(
-        step = 3,
+        step = 15,
         uncheckedDrawable = R.drawable.unchecked_black,
         checkedDrawable = R.drawable.checked_black,
         stepWidth = 30,
@@ -32,7 +32,7 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
 
     private var currentStep = 0
 
-
+    private var changeStepListener = mutableListOf<OnChangeStepListener>()
 
 
 
@@ -47,6 +47,10 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
             onBoardingConfiguration!!.marginEndStep,
             onBoardingConfiguration!!.marginBottomStep
             )
+    }
+
+    override fun setId(id: Int) {
+        super.setId(id)
     }
 
     init {
@@ -69,7 +73,7 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
 
     private fun loadStepWidget() {
         stepWidget = mutableListOf()
-        for(step in 0..onBoardingConfiguration?.step!!){
+        for(step in 0..onBoardingConfiguration?.step!! - 1){
             stepWidget.add(TextView(context).apply {
                 background = context.getDrawable(onBoardingConfiguration!!.uncheckedDrawable)
                 width = onBoardingConfiguration!!.stepWidth
@@ -101,19 +105,39 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
             if(currentStep > 0){
                 currentStep--
                 checkProgressOnBoarding()
-                Log.d(TAG,"CurrentStep: $currentStep")
+                if(changeStepListener.size > 0){
+                    notifyListener()
+                }
             }
         }
         nextButton.setOnClickListener{
-            if(currentStep < onBoardingConfiguration!!.step){
+            if(currentStep == onBoardingConfiguration!!.step -1){
+                for(listener in changeStepListener){
+                    listener.onOnBoardingComplete()
+                }
+            }
+            if(currentStep < onBoardingConfiguration!!.step - 1){
                 currentStep++
                 checkProgressOnBoarding()
+                if(changeStepListener.size > 0){
+                    notifyListener()
+                }
             }
+        }
+    }
+
+    private fun notifyListener(){
+        for(listener in changeStepListener){
+            listener.onStepChange(currentStep)
         }
     }
 
     fun loadOnboardingConfiguration(configuration : OnBoardingConfiguration){
         this.onBoardingConfiguration = configuration
+    }
+
+    fun setOnChangeStepListener(listener : OnChangeStepListener){
+        changeStepListener.add(listener)
     }
 
 }
