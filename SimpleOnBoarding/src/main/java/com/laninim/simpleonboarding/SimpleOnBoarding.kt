@@ -15,7 +15,7 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
      var onBoardingConfiguration : OnBoardingConfiguration? = OnBoardingConfiguration(
         step = 3,
         uncheckedDrawable = R.drawable.unchecked_black,
-        checkedDrawable = R.drawable.unchecked_black,
+        checkedDrawable = R.drawable.checked_black,
         stepWidth = 30,
         stepHeigth = 30,
         marginStartStep = 8,
@@ -30,17 +30,17 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
     private var nextButton : TextView
 
 
+    private var currentStep = 0
 
 
-    private var checkedDrawable = R.drawable.unchecked_black
 
-    private var onBoardingStepWidth = 25
 
-    private var onBoardingStepHeigth = 25
+
 
     private lateinit var stepWidget : MutableList<TextView>
 
-    private val params = LayoutParams(onBoardingStepWidth,onBoardingStepHeigth).apply {
+    private val params = LayoutParams(onBoardingConfiguration!!.stepWidth,
+        onBoardingConfiguration!!.stepHeigth).apply {
         this.setMargins(
             onBoardingConfiguration!!.marginStartStep,
             onBoardingConfiguration!!.marginTopStep,
@@ -63,6 +63,8 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
     private fun initSimpleOnBoarding(){
         loadStepWidget()
         addStepToStepBox()
+        checkProgressOnBoarding()
+        onBoardingController()
     }
 
     private fun loadStepWidget() {
@@ -82,6 +84,36 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
         for(step in stepWidget){
             stepBox.addView(step)
         }
+    }
+
+    private fun checkProgressOnBoarding(){
+        for(step in stepWidget){
+            if(stepWidget.indexOf(step) == currentStep){
+                step.background = context.getDrawable(onBoardingConfiguration!!.checkedDrawable)
+            }else{
+                step.background = context.getDrawable(onBoardingConfiguration!!.uncheckedDrawable)
+            }
+        }
+    }
+
+    private fun onBoardingController(){
+        prevButton.setOnClickListener{
+            if(currentStep > 0){
+                currentStep--
+                checkProgressOnBoarding()
+                Log.d(TAG,"CurrentStep: $currentStep")
+            }
+        }
+        nextButton.setOnClickListener{
+            if(currentStep < onBoardingConfiguration!!.step){
+                currentStep++
+                checkProgressOnBoarding()
+            }
+        }
+    }
+
+    fun loadOnboardingConfiguration(configuration : OnBoardingConfiguration){
+        this.onBoardingConfiguration = configuration
     }
 
 }
