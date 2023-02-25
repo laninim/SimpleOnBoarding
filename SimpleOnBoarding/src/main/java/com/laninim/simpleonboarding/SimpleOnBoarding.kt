@@ -6,14 +6,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.marginStart
-import androidx.core.view.setMargins
+import com.laninim.simpleonboarding.model.OnBoardingConfiguration
+import com.laninim.simpleonboarding.model.OnBoardingStyle
+import com.laninim.simpleonboarding.model.PresetStyle
 
 const val TAG = "SimpleOnBoarding"
+const val DEFAULT_STEP = 20
 class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: AttributeSet? = null,defStyle : Int = 0, defStyleRes : Int = 0) : LinearLayout(context,attrs,defStyle,defStyleRes){
 
      var onBoardingConfiguration : OnBoardingConfiguration? = OnBoardingConfiguration(
-        step = 15,
+        step = DEFAULT_STEP,
         uncheckedDrawable = R.drawable.unchecked_black,
         checkedDrawable = R.drawable.checked_black,
         stepWidth = 30,
@@ -34,10 +36,9 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
 
     private var changeStepListener = mutableListOf<OnChangeStepListener>()
 
-
-
-
     private lateinit var stepWidget : MutableList<TextView>
+
+    private var presetStyle = PresetStyle.DEFAULT
 
     private val params = LayoutParams(onBoardingConfiguration!!.stepWidth,
         onBoardingConfiguration!!.stepHeigth).apply {
@@ -65,10 +66,13 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
     }
 
     private fun initSimpleOnBoarding(){
+
+        loadPresetStyle()
         loadStepWidget()
         addStepToStepBox()
         checkProgressOnBoarding()
         onBoardingController()
+
     }
 
     private fun loadStepWidget() {
@@ -139,5 +143,70 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
     fun setOnChangeStepListener(listener : OnChangeStepListener){
         changeStepListener.add(listener)
     }
+
+    private fun changePrevButton(drawable : Int){
+        prevButton.background = context.getDrawable(drawable)
+    }
+
+    private fun changeNextButton(drawable : Int){
+        nextButton.background = context.getDrawable(drawable)
+    }
+
+    private fun loadPresetStyle(){
+        when(presetStyle){
+            PresetStyle.DEFAULT -> {
+                val onBoardingStyle = OnBoardingStyle(
+                    R.drawable.unchecked_black,
+                    R.drawable.checked_black,
+                    R.drawable.arrowbackblack,
+                    R.drawable.arrownextblack
+                )
+                applyStyle(onBoardingStyle)
+
+            }
+            PresetStyle.RED -> {
+                val onBoardingStyle = OnBoardingStyle(
+                    R.drawable.unchecked_red,
+                    R.drawable.checked_red,
+                    R.drawable.arrowbackred,
+                    R.drawable.arrownextred
+                )
+                applyStyle(onBoardingStyle)
+            }
+            PresetStyle.PURPLE -> {
+                val onBoardingStyle = OnBoardingStyle(
+                    R.drawable.unchecked_purple,
+                    R.drawable.checked_purple,
+                    R.drawable.arrowbackpurple,
+                    R.drawable.arrownextpurple
+                )
+                applyStyle(onBoardingStyle)
+            }
+        }
+    }
+
+    private fun applyStyle(style : OnBoardingStyle){
+        val newOnBoardingConfiguration = OnBoardingConfiguration(
+            onBoardingConfiguration!!.step,
+            style.uncheckedImage,
+            style.checkedImage,
+            onBoardingConfiguration!!.stepWidth,
+            onBoardingConfiguration!!.stepHeigth,
+            onBoardingConfiguration!!.marginStartStep,
+            onBoardingConfiguration!!.marginEndStep,
+            onBoardingConfiguration!!.marginBottomStep,
+            onBoardingConfiguration!!.marginTopStep
+        )
+        onBoardingConfiguration = newOnBoardingConfiguration
+        changePrevButton(style.prevButtonIcon)
+        changeNextButton(style.nextButtonIcon)
+    }
+
+    fun applyDefaultStyle(defaultStyle : PresetStyle){
+        presetStyle = defaultStyle
+        loadPresetStyle()
+    }
+
+
 
 }

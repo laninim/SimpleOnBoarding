@@ -1,4 +1,4 @@
-package com.laninim.simpleonboarding
+package com.laninim.simpleonboarding.model
 
 data class OnBoardingConfiguration(
     val step : Int = 3,

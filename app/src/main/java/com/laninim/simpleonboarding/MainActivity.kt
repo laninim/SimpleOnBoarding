@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
+import com.laninim.simpleonboarding.model.OnBoardingStyle
+import com.laninim.simpleonboarding.model.PresetStyle
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         val customView = findViewById<SimpleOnBoarding>(R.id.customView)
         val textview = findViewById<TextView>(R.id.textView)
+        customView.applyDefaultStyle(PresetStyle.PURPLE)
         customView.setOnChangeStepListener(object : OnChangeStepListener{
             override fun onStepChange(step: Int) {
                 textview.text = step.toString()
