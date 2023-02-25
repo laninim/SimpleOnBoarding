@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val onBoardingConfiguration = OnBoardingConfiguration(
-            9,
+            8,
             stepWidth = 25,
             stepHeigth = 25,
             marginStartStep =14,
@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         customView.loadOnboardingConfiguration(onBoardingConfiguration)
+        customView.setAutomaticOnBoarding()
 
         customView.initSimpleOnBoarding()
 

@@ -4,12 +4,17 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.laninim.simpleonboarding.exception.MaxStepAllowedException
 import com.laninim.simpleonboarding.model.OnBoardingConfiguration
 import com.laninim.simpleonboarding.model.OnBoardingStyle
 import com.laninim.simpleonboarding.model.PresetStyle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 const val TAG = "SimpleOnBoarding"
 const val DEFAULT_STEP = 3
@@ -48,6 +53,8 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
 
     private var presetStyle = PresetStyle.DEFAULT
 
+    private var AUTOMATE_STEP = false
+
 
 
     private var params = LayoutParams(onBoardingConfiguration!!.stepWidth,
@@ -82,6 +89,12 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
         addStepToStepBox()
         checkProgressOnBoarding()
         onBoardingController()
+
+        if(AUTOMATE_STEP){
+            GlobalScope.launch(Dispatchers.Main) {
+                doAutomateStepWork()
+            }
+        }
 
     }
 
@@ -226,6 +239,35 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
     fun applyDefaultStyle(defaultStyle : PresetStyle){
         presetStyle = defaultStyle
         loadPresetStyle()
+    }
+
+    fun setAutomaticOnBoarding(){
+        AUTOMATE_STEP = true
+    }
+
+
+    suspend fun doAutomateStepWork(){
+        do{
+            Log.d(TAG,"CoroutineCurrent: $currentStep")
+            Log.d(TAG,"CoroutineOnboarding: ${onBoardingConfiguration!!.step - 1}")
+            prevButton.visibility = View.INVISIBLE
+            nextButton.visibility = View.INVISIBLE
+            delay(2000)
+            currentStep++
+            checkProgressOnBoarding()
+            if(changeStepListener.size > 0){
+                notifyListener()
+            }
+
+            if(currentStep == onBoardingConfiguration!!.step){
+                for(listener in changeStepListener){
+                    listener.onOnBoardingComplete()
+                }
+                Thread.currentThread().join()
+            }
+
+        }while (currentStep < onBoardingConfiguration!!.step)
+
     }
 
 
