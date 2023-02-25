@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         customView.loadOnboardingConfiguration(onBoardingConfiguration)
-        customView.setAutomaticOnBoarding()
+        customView.setAutomaticOnBoarding(SimpleOnBoarding.SpeedOnBoarding.FAST)
 
         customView.initSimpleOnBoarding()
 

@@ -55,6 +55,12 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
 
     private var AUTOMATE_STEP = false
 
+    enum class SpeedOnBoarding {
+        SLOW, MEDIUM, FAST
+    }
+
+    private var automateOnBoardingSpeed = SpeedOnBoarding.SLOW
+
 
 
     private var params = LayoutParams(onBoardingConfiguration!!.stepWidth,
@@ -91,8 +97,14 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
         onBoardingController()
 
         if(AUTOMATE_STEP){
+            val delay : Long = when(automateOnBoardingSpeed){
+                SpeedOnBoarding.SLOW -> 4000
+                SpeedOnBoarding.MEDIUM -> 2000
+                SpeedOnBoarding.FAST -> 1000
+            }
+
             GlobalScope.launch(Dispatchers.Main) {
-                doAutomateStepWork()
+                doAutomateStepWork(delay)
             }
         }
 
@@ -241,18 +253,19 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
         loadPresetStyle()
     }
 
-    fun setAutomaticOnBoarding(){
+    fun setAutomaticOnBoarding(speed : SpeedOnBoarding){
         AUTOMATE_STEP = true
+        automateOnBoardingSpeed = speed
     }
 
 
-    suspend fun doAutomateStepWork(){
+    private suspend fun doAutomateStepWork(delay : Long){
         do{
             Log.d(TAG,"CoroutineCurrent: $currentStep")
             Log.d(TAG,"CoroutineOnboarding: ${onBoardingConfiguration!!.step - 1}")
             prevButton.visibility = View.INVISIBLE
             nextButton.visibility = View.INVISIBLE
-            delay(2000)
+            delay(delay)
             currentStep++
             checkProgressOnBoarding()
             if(changeStepListener.size > 0){
