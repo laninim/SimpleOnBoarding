@@ -12,24 +12,28 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-    }
 
-
-
-    override fun onStart() {
-        super.onStart()
         val customView = findViewById<SimpleOnBoarding>(R.id.customView)
         val textview = findViewById<TextView>(R.id.textView)
-        customView.applyDefaultStyle(PresetStyle.PURPLE)
+
+
+
+        customView.initSimpleOnBoarding()
+
         customView.setOnChangeStepListener(object : OnChangeStepListener{
             override fun onStepChange(step: Int) {
                 textview.text = step.toString()
             }
 
             override fun onOnBoardingComplete() {
-               Toast.makeText(applicationContext,"On boarding complete",Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext,"On boarding complete",Toast.LENGTH_LONG).show()
             }
 
         })
     }
-}
+
+    }
+
+
+
+

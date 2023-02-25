@@ -14,10 +14,17 @@ const val TAG = "SimpleOnBoarding"
 const val DEFAULT_STEP = 20
 class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: AttributeSet? = null,defStyle : Int = 0, defStyleRes : Int = 0) : LinearLayout(context,attrs,defStyle,defStyleRes){
 
+
+    private var onBoardingstyle = OnBoardingStyle(
+        R.drawable.unchecked_black,
+        R.drawable.checked_black,
+        R.drawable.arrowbackblack,
+        R.drawable.arrownextblack
+    )
+
      var onBoardingConfiguration : OnBoardingConfiguration? = OnBoardingConfiguration(
         step = DEFAULT_STEP,
-        uncheckedDrawable = R.drawable.unchecked_black,
-        checkedDrawable = R.drawable.checked_black,
+        onboardingStyle = onBoardingstyle,
         stepWidth = 30,
         stepHeigth = 30,
         marginStartStep = 8,
@@ -39,6 +46,8 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
     private lateinit var stepWidget : MutableList<TextView>
 
     private var presetStyle = PresetStyle.DEFAULT
+
+
 
     private val params = LayoutParams(onBoardingConfiguration!!.stepWidth,
         onBoardingConfiguration!!.stepHeigth).apply {
@@ -62,10 +71,10 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
         prevButton = view.findViewById(R.id.prevbutton)
         nextButton = view.findViewById(R.id.nextbutton)
 
-        initSimpleOnBoarding()
+
     }
 
-    private fun initSimpleOnBoarding(){
+    fun initSimpleOnBoarding(){
 
         loadPresetStyle()
         loadStepWidget()
@@ -79,7 +88,7 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
         stepWidget = mutableListOf()
         for(step in 0..onBoardingConfiguration?.step!! - 1){
             stepWidget.add(TextView(context).apply {
-                background = context.getDrawable(onBoardingConfiguration!!.uncheckedDrawable)
+                background = context.getDrawable(onBoardingConfiguration!!.onboardingStyle.uncheckedImage)
                 width = onBoardingConfiguration!!.stepWidth
                 height = onBoardingConfiguration!!.stepHeigth
                 layoutParams = params
@@ -97,9 +106,9 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
     private fun checkProgressOnBoarding(){
         for(step in stepWidget){
             if(stepWidget.indexOf(step) == currentStep){
-                step.background = context.getDrawable(onBoardingConfiguration!!.checkedDrawable)
+                step.background = context.getDrawable(onBoardingConfiguration!!.onboardingStyle.checkedImage)
             }else{
-                step.background = context.getDrawable(onBoardingConfiguration!!.uncheckedDrawable)
+                step.background = context.getDrawable(onBoardingConfiguration!!.onboardingStyle.uncheckedImage)
             }
         }
     }
@@ -155,32 +164,32 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
     private fun loadPresetStyle(){
         when(presetStyle){
             PresetStyle.DEFAULT -> {
-                val onBoardingStyle = OnBoardingStyle(
+                    onBoardingstyle = OnBoardingStyle(
                     R.drawable.unchecked_black,
                     R.drawable.checked_black,
                     R.drawable.arrowbackblack,
                     R.drawable.arrownextblack
                 )
-                applyStyle(onBoardingStyle)
+                applyStyle(onBoardingstyle)
 
             }
             PresetStyle.RED -> {
-                val onBoardingStyle = OnBoardingStyle(
+                    onBoardingstyle = OnBoardingStyle(
                     R.drawable.unchecked_red,
                     R.drawable.checked_red,
                     R.drawable.arrowbackred,
                     R.drawable.arrownextred
                 )
-                applyStyle(onBoardingStyle)
+                applyStyle(onBoardingstyle)
             }
             PresetStyle.PURPLE -> {
-                val onBoardingStyle = OnBoardingStyle(
+                    onBoardingstyle = OnBoardingStyle(
                     R.drawable.unchecked_purple,
                     R.drawable.checked_purple,
                     R.drawable.arrowbackpurple,
                     R.drawable.arrownextpurple
                 )
-                applyStyle(onBoardingStyle)
+                applyStyle(onBoardingstyle)
             }
         }
     }
@@ -188,8 +197,7 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
     private fun applyStyle(style : OnBoardingStyle){
         val newOnBoardingConfiguration = OnBoardingConfiguration(
             onBoardingConfiguration!!.step,
-            style.uncheckedImage,
-            style.checkedImage,
+            style,
             onBoardingConfiguration!!.stepWidth,
             onBoardingConfiguration!!.stepHeigth,
             onBoardingConfiguration!!.marginStartStep,
