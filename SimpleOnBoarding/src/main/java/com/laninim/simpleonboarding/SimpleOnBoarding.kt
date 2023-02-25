@@ -6,12 +6,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.laninim.simpleonboarding.exception.MaxStepAllowedException
 import com.laninim.simpleonboarding.model.OnBoardingConfiguration
 import com.laninim.simpleonboarding.model.OnBoardingStyle
 import com.laninim.simpleonboarding.model.PresetStyle
 
 const val TAG = "SimpleOnBoarding"
-const val DEFAULT_STEP = 20
+const val DEFAULT_STEP = 3
 class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: AttributeSet? = null,defStyle : Int = 0, defStyleRes : Int = 0) : LinearLayout(context,attrs,defStyle,defStyleRes){
 
 
@@ -49,7 +50,7 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
 
 
 
-    private val params = LayoutParams(onBoardingConfiguration!!.stepWidth,
+    private var params = LayoutParams(onBoardingConfiguration!!.stepWidth,
         onBoardingConfiguration!!.stepHeigth).apply {
         this.setMargins(
             onBoardingConfiguration!!.marginStartStep,
@@ -145,8 +146,20 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
         }
     }
 
+    @Throws(MaxStepAllowedException::class)
     fun loadOnboardingConfiguration(configuration : OnBoardingConfiguration){
-        this.onBoardingConfiguration = configuration
+        if(configuration.step < 10){
+            this.onBoardingConfiguration = configuration
+            params = LayoutParams(
+                configuration.stepWidth,
+                configuration.stepHeigth
+            ).apply {
+                setMargins(configuration.marginStartStep,configuration.marginTopStep,configuration.marginEndStep,configuration.marginBottomStep)
+            }
+        }else{
+            throw MaxStepAllowedException("The max step allowed is 9")
+            return
+        }
     }
 
     fun setOnChangeStepListener(listener : OnChangeStepListener){

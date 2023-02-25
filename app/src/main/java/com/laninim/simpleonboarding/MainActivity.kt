@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
+import com.laninim.simpleonboarding.model.OnBoardingConfiguration
 import com.laninim.simpleonboarding.model.OnBoardingStyle
 import com.laninim.simpleonboarding.model.PresetStyle
 
@@ -17,6 +18,17 @@ class MainActivity : AppCompatActivity() {
         val textview = findViewById<TextView>(R.id.textView)
 
 
+        val onBoardingConfiguration = OnBoardingConfiguration(
+            9,
+            stepWidth = 25,
+            stepHeigth = 25,
+            marginStartStep =14,
+            marginBottomStep = 0,
+            marginTopStep = 0,
+            marginEndStep = 14
+        )
+
+        customView.loadOnboardingConfiguration(onBoardingConfiguration)
 
         customView.initSimpleOnBoarding()
 
