@@ -18,17 +18,7 @@ class MainActivity : AppCompatActivity() {
         val textview = findViewById<TextView>(R.id.textView)
 
 
-        val onBoardingConfiguration = OnBoardingConfiguration(
-            8,
-            stepWidth = 25,
-            stepHeigth = 25,
-            marginStartStep =14,
-            marginBottomStep = 0,
-            marginTopStep = 0,
-            marginEndStep = 14
-        )
 
-        customView.loadOnboardingConfiguration(onBoardingConfiguration)
         customView.setAutomaticOnBoarding(SimpleOnBoarding.SpeedOnBoarding.FAST)
 
         customView.initSimpleOnBoarding()

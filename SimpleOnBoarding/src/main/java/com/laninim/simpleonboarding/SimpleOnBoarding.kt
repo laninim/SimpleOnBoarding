@@ -85,7 +85,9 @@ class SimpleOnBoarding @JvmOverloads constructor(context:Context,attrs: Attribut
         prevButton = view.findViewById(R.id.prevbutton)
         nextButton = view.findViewById(R.id.nextbutton)
 
-
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.SimpleOnBoarding)
+        onBoardingConfiguration?.step = typedArray.getInteger(R.styleable.SimpleOnBoarding_step, DEFAULT_STEP)
+        typedArray.recycle()
     }
 
     fun initSimpleOnBoarding(){
